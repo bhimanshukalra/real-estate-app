@@ -167,8 +167,18 @@ export async function getPropertyById({ id }: { id: string }) {
       tableId: config.propertiesCollectionId!,
       queries: [Query.equal("$id", id)],
     });
+    const property = result.rows[0];
 
-    return result.rows[0];
+    const agentResult = await tables.listRows({
+      databaseId: config.databaseId!,
+      tableId: config.agentsCollectionId!,
+      queries: [Query.equal("$id", property.agent)],
+    });
+    const agent = agentResult.rows[0];
+
+    const response = { ...property, agent };
+
+    return response;
   } catch (error) {
     console.error(error);
     return null;

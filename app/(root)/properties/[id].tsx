@@ -21,7 +21,6 @@ import { useAppwrite } from "@/lib/useAppwrite";
 const Property = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
 
-  console.log("Property id", id);
 
   const windowHeight = Dimensions.get("window").height;
 

@@ -1,5 +1,5 @@
 import { ID } from "react-native-appwrite";
-import { databases, config } from "./appwrite";
+import { config, databases } from "./appwrite";
 import {
   agentImages,
   galleryImages,
@@ -25,13 +25,7 @@ const propertyTypes = [
   "Other",
 ];
 
-const facilities = [
-  "Laundry",
-  "Parking",
-  "Gym",
-  "Wifi",
-  "Pet-friendly",
-];
+const facilities = ["Laundry", "Parking", "Gym", "Wifi", "Pet-friendly"];
 
 function getRandomSubset<T>(
   array: T[],
@@ -68,6 +62,7 @@ function getRandomSubset<T>(
 }
 
 async function seed() {
+  console.log("seeding");
   try {
     // Clear existing data from all collections
     for (const key in COLLECTIONS) {
