@@ -3,7 +3,7 @@ import { FeaturedPropertyCard, PropertyCard } from "@/components/PropertyCard";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
 import { useGlobalContext } from "@/lib/global-provider";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -41,11 +41,15 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
       </View>
-      <View className="flex flex-row gap-5 mt-5">
-        <FeaturedPropertyCard />
-        <FeaturedPropertyCard />
-        <FeaturedPropertyCard />
-      </View>
+      <FlatList
+        data={[1, 2, 3]}
+        renderItem={({ item }) => <FeaturedPropertyCard />}
+        keyExtractor={(item) => item.toString()}
+        horizontal
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="flex gap-5 mt-5"
+      />
     </View>
   );
 
@@ -62,19 +66,28 @@ export default function Index() {
         </TouchableOpacity>
       </View>
       <Filters />
-      <View className="flex flex-row gap-5 mt-5">
-        <PropertyCard />
-        <PropertyCard />
-      </View>
     </View>
   );
 
   return (
     <SafeAreaView className="bg-white h-full px-5">
-      <Header />
-      <Search />
-      <FeaturedSection />
-      <RecommendationSection />
+      <FlatList
+        data={[1, 2]}
+        renderItem={({ item }) => <PropertyCard />}
+        keyExtractor={(item) => item.toString()}
+        numColumns={2}
+        contentContainerClassName="pb-32"
+        columnWrapperClassName="flex gap-5 px-5"
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <Header />
+            <Search />
+            <FeaturedSection />
+            <RecommendationSection />
+          </>
+        }
+      />
     </SafeAreaView>
   );
 }
