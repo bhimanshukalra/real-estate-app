@@ -1,12 +1,6 @@
-import {
-  Account,
-  Avatars,
-  Client,
-  Models,
-  OAuthProvider,
-} from "react-native-appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
+import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
 
 export const config = {
   platform: process.env.EXPO_PUBLIC_PLATFORM_NAME,
@@ -69,12 +63,14 @@ export async function logout() {
     const user = await getCurrentUser();
     if (!user) {
       console.warn("No active user session to log out from");
-      return;
+      return false;
     }
-    await account.deleteSession({ sessionId: user.$id });
+    await account.deleteSession({ sessionId: "current" });
     console.log("User logged out successfully");
+    return true;
   } catch (error) {
     console.error("Logout Error:", error);
+    return false;
   }
 }
 
@@ -83,12 +79,8 @@ export async function getCurrentUser() {
     const user = await account.get();
 
     if (user.$id) {
-      const userAvatar = await avatar.getInitials({
-        name: user.name,
-        width: 100,
-        height: 100,
-      });
-      return { ...user, avatarUrl: userAvatar };
+      const userAvatar = avatar.getInitialsURL(user.name);
+      return { ...user, avatar: userAvatar.toString() };
     }
     return user;
   } catch (error) {
