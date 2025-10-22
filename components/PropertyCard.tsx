@@ -10,8 +10,8 @@ interface PropertyCardProps {
 }
 
 export const FeaturedPropertyCard = ({ item, onPress }: PropertyCardProps) => {
-  const handleOnPress = () => onPress(item.id);
-  const { image, rating, name, address, price } = item;
+  const { image, rating, name, address, price, $id } = item;
+  const handleOnPress = () => onPress($id);
   const imageSource = { uri: image };
   return (
     <TouchableOpacity
@@ -49,8 +49,8 @@ export const FeaturedPropertyCard = ({ item, onPress }: PropertyCardProps) => {
 };
 
 export const PropertyCard = ({ item, onPress }: PropertyCardProps) => {
-  const handleOnPress = () => onPress(item.id);
-  const { image, rating, name, address, price } = item;
+  const { image, rating, name, address, price, $id } = item;
+  const handleOnPress = () => onPress($id);
   const imageSource = { uri: image };
   return (
     <TouchableOpacity

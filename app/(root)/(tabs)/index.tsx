@@ -93,7 +93,7 @@ export default function Index() {
           horizontal
           bounces={false}
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName="flex gap-5 mt-5 flex-1"
+          contentContainerClassName="flex gap-5 mt-5"
         />
       )}
     </View>
@@ -116,7 +116,7 @@ export default function Index() {
   );
 
   return (
-    <SafeAreaView className="bg-white h-full px-5">
+    <SafeAreaView className="bg-white h-full">
       <FlatList
         data={properties}
         renderItem={({ item }) => (
@@ -135,12 +135,12 @@ export default function Index() {
           )
         }
         ListHeaderComponent={
-          <>
+          <View className="px-5">
             <Header />
             <Search />
             <FeaturedSection />
             <RecommendationSection />
-          </>
+          </View>
         }
       />
     </SafeAreaView>
