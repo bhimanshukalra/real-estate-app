@@ -159,3 +159,18 @@ export async function getProperties({
     return [];
   }
 }
+
+export async function getPropertyById({ id }: { id: string }) {
+  try {
+    const result = await tables.listRows({
+      databaseId: config.databaseId!,
+      tableId: config.propertiesCollectionId!,
+      queries: [Query.equal("$id", id)],
+    });
+
+    return result.rows[0];
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
