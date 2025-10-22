@@ -1,13 +1,51 @@
 import Filters from "@/components/Filters";
+import NoResults from "@/components/NoResults";
 import { FeaturedPropertyCard, PropertyCard } from "@/components/PropertyCard";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
+import { getLatestProperties, getProperties } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { useAppwrite } from "@/lib/useAppwrite";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { user } = useGlobalContext();
+  const params = useLocalSearchParams<{ query?: string; filter?: string }>();
+
+  const { data: latestProperties, loading: latestPropertiesLoading } =
+    useAppwrite({
+      fn: getLatestProperties,
+    });
+
+  const {
+    data: properties,
+    loading: propertiesLoading,
+    refetch,
+  } = useAppwrite({
+    fn: getProperties,
+    params: {
+      filter: params.filter!,
+      query: params.query!,
+      limit: 6,
+    },
+    skip: true,
+  });
+
+  useEffect(() => {
+    refetch({ filter: params.filter!, query: params.query!, limit: 6 });
+  }, [params.filter, params.query]);
+
+  const handleCardPress = (id: string) => router.push(`/properties/${id}`);
 
   const currentUserAvatarSource = { uri: user?.avatar };
 
@@ -41,15 +79,23 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={[1, 2, 3]}
-        renderItem={({ item }) => <FeaturedPropertyCard />}
-        keyExtractor={(item) => item.toString()}
-        horizontal
-        bounces={false}
-        showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex gap-5 mt-5"
-      />
+      {latestPropertiesLoading ? (
+        <ActivityIndicator size="large" className="text-primary-300" />
+      ) : !latestProperties || latestProperties.length === 0 ? (
+        <NoResults />
+      ) : (
+        <FlatList
+          data={latestProperties}
+          renderItem={({ item }) => (
+            <FeaturedPropertyCard item={item} onPress={handleCardPress} />
+          )}
+          keyExtractor={(item) => item.$id}
+          horizontal
+          bounces={false}
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="flex gap-5 mt-5 flex-1"
+        />
+      )}
     </View>
   );
 
@@ -72,13 +118,22 @@ export default function Index() {
   return (
     <SafeAreaView className="bg-white h-full px-5">
       <FlatList
-        data={[1, 2]}
-        renderItem={({ item }) => <PropertyCard />}
-        keyExtractor={(item) => item.toString()}
+        data={properties}
+        renderItem={({ item }) => (
+          <PropertyCard item={item} onPress={handleCardPress} />
+        )}
+        keyExtractor={(item) => item.$id}
         numColumns={2}
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5"
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          propertiesLoading ? (
+            <ActivityIndicator size="large" className="text-primary-300 mt-5" />
+          ) : (
+            <NoResults />
+          )
+        }
         ListHeaderComponent={
           <>
             <Header />
